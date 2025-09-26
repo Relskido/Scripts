@@ -24,8 +24,6 @@ local Home = Window:Tab({
     Locked = false,
 })
 
-local TabDivider = Window:Divider()
-
 local Main = Window:Tab({
     Title = "Main",
     Icon = "tool-case",
@@ -43,8 +41,6 @@ local Shop = Window:Tab({
     Icon = "store",
     Locked = false,
 })
-
-local TabDivider2 = Window:Divider()
 
 local Info = Window:Tab({
     Title = "Info",
