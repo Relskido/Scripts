@@ -49,7 +49,7 @@ local TabDivider2 = Window:Divider()
 local Info = Window:Tab({
     Title = "Info",
     Icon = "info",
-    Locked = true,
+    Locked = false,
 })
 
 -- // Variables \\ --
@@ -248,7 +248,7 @@ Main:Toggle({
 Main:Button({
     Title = "Save Position",
     Desc = "Save's Your Position",
-    Locked = true,
+    Locked = false,
     Callback = function()
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             pos = player.Character.HumanoidRootPart.CFrame
