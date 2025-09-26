@@ -141,10 +141,16 @@ local function AutoBuy(Item, Type)
         print("AutoBuy: Invalid Type argument")
         return
     end
+<<<<<<< HEAD
     
     if Item == "" then
         print("AutoBuy: Invalid Item argument")
         return
+=======
+
+    if Plant == "" then
+        print("local function 'AutoBuy' Has Invalid Arguments. Got: null | Type: Item")
+>>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
     end
     
     if Type == ShopType.Seeds then
@@ -230,7 +236,11 @@ local selectedType = ""
 local ShopConnection
 
 Shop:Dropdown({
+<<<<<<< HEAD
     Title = "Item Type",
+=======
+    Title = "Attack Type",
+>>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
     Values = { "None", "Seed", "Gear" },
     Value = "None",
     Callback = function(option)
@@ -253,7 +263,11 @@ local ItemInput = Shop:Input({
 Shop:Toggle({
     Title = "Auto Buy Item",
     Desc = "Improving",
+<<<<<<< HEAD
     Icon = "checkmark",
+=======
+    Icon = "bird",
+>>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
     Type = "Checkbox",
     Default = false,
     Callback = function(state)
@@ -265,14 +279,25 @@ Shop:Toggle({
         end
         if state and not ShopConnection then
             ShopConnection = RunService.Heartbeat:Connect(function()
+<<<<<<< HEAD
                 if selectedType ~= "None" and selectedItem ~= "" then
                     if selectedType == "Gear" then
                         AutoBuy(selectedItem, ShopType.Gears)
                 elseif selectedType == "Seed" then
+=======
+                if autobuy then
+                    if selectedType == "Gear" then
+                        AutoBuy(selectedItem, ShopType.Gears)
+                    elseif selectedType == "Seed" then
+>>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
                         AutoBuy(selectedItem, ShopType.Seeds)
                     end
                 end
             end)
         end
     end
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
