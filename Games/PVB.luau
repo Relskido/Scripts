@@ -65,7 +65,7 @@ local BridgeNet2 = RS:WaitForChild("BridgeNet2")
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local BackPack = player:WaitForChild("Backpack")
+local Backpack = player:WaitForChild("Backpack")
 
 local farming = false
 local AutoPlantVar = false
