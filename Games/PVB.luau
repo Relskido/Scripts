@@ -49,10 +49,8 @@ local TabDivider2 = Window:Divider()
 local Info = Window:Tab({
     Title = "Info",
     Icon = "info",
-    Locked = true,
+    Locked = false,
 })
-
-Window:SelectTab(Main)
 
 -- // Variables \\ --
 local Players = game:GetService("Players")
@@ -146,7 +144,7 @@ end
 -- // Functions \\ --
 function AutoFarmBrainrot(Type)
     if Type == AttackTypes.Normal then
-            if not Equipped then
+            if Equipped == false then
                 EquipBat()
                     for _, v in ipairs(Brainrots:GetChildren()) do
                         if v:IsA("Model") then
@@ -160,16 +158,15 @@ function AutoFarmBrainrot(Type)
             end
         end
     elseif Type == AttackTypes.Instant then
-        if not Equipped then
+        if Equipped == false then
             EquipBat()
             for _, v in ipairs(Brainrots:GetChildren()) do
                 if v:IsA("Model") then
                     local root = v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("RootPart")
                     if root then
                             TeleportToBrainrot(v)
-                                local pos = UIS:GetMouseLocation()
-                                    VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 0)
-                                        VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 0)
+                                    VIM:SendMouseButtonEvent(300, 100, 0, true, game, 0)
+                                        VIM:SendMouseButtonEvent(300, 100, 0, false, game, 0)
                         break
                     end
                 end
@@ -184,12 +181,12 @@ end
 
 function AutoBuy(Item, Type)
     if Type == "" then
-        print("AutoBuy: Invalid Type argument")
+        print("Function 'AutoBuy' Has Invalid Type argument. got 'null'")
         return
     end
     
     if Item == "" then
-        print("AutoBuy: Invalid Item argument")
+        print("Function 'AutoBuy' Has Invalid Item argument. got 'null' ")
         return
     end
     
@@ -201,7 +198,6 @@ function AutoBuy(Item, Type)
 end
 
 -- // Main \\ --
-Main:Section({ Title = "Auto Farm", Icon = "timer" })
 
 Main:Dropdown({
     Title = "Attack Type",
@@ -250,7 +246,7 @@ Main:Toggle({
 Main:Button({
     Title = "Save Position",
     Desc = "Save's Your Position",
-    Locked = true,
+    Locked = false,
     Callback = function()
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             pos = player.Character.HumanoidRootPart.CFrame
