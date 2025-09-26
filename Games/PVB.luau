@@ -118,10 +118,10 @@ local function TeleportToBrainrot(brainrotModel)
 end
 
 local function EquipBat()
-    local tool = BackPack:FindFirstChild("Bat")
+    local tool = Backpack:FindFirstChild("Bat")
     if not tool then return end
 
-    if Equipped ~= true then
+    if not Equipped then
         if tool.Parent ~= character then
             Equipped = true
             character:WaitForChild("Humanoid"):EquipTool(tool)
