@@ -52,8 +52,6 @@ local Info = Window:Tab({
     Locked = true,
 })
 
-Window:SelectTab(Main)
-
 -- // Variables \\ --
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
