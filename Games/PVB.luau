@@ -211,17 +211,6 @@ Main:Dropdown({
 })
 
 Main:Toggle({
-    Title = "Auto Equip Bat",
-    Desc = "Improving",
-    Icon = "checkmark",
-    Type = "Checkbox",
-    Default = false,
-    Callback = function(state)
-        EquipBat()
-    end
-})
-
-Main:Toggle({
     Title = "Auto Farm",
     Desc = "Improving",
     Icon = "checkmark",
