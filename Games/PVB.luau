@@ -44,6 +44,14 @@ local Shop = Window:Tab({
     Locked = false,
 })
 
+local TabDivider2 = Window:Divider()
+
+local Info = Window:Tab({
+    Title = "Info",
+    Icon = "info",
+    Locked = true,
+})
+
 Window:SelectTab(Main)
 
 -- // Variables \\ --
@@ -322,3 +330,5 @@ Shop:Toggle({
         end
     end
 })
+
+-- BrainRots
