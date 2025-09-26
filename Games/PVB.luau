@@ -24,9 +24,17 @@ local Home = Window:Tab({
     Locked = false,
 })
 
+local TabDivider = Window:Divider()
+
 local Main = Window:Tab({
     Title = "Main",
     Icon = "tool-case",
+    Locked = false,
+})
+
+local BrainRots = Window:Tab({
+    Title = "Brainrots",
+    Icon = "circle-dollar-sign",
     Locked = false,
 })
 
@@ -36,32 +44,38 @@ local Shop = Window:Tab({
     Locked = false,
 })
 
--- // Vars \\ --
+Window:SelectTab(Main)
+
+-- // Variables \\ --
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
 local VIM = game:GetService("VirtualInputManager")
 local HttpService = game:GetService("HttpService")
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
 local Brainrots = workspace:WaitForChild("ScriptedMap"):WaitForChild("Brainrots")
-
 local RS = game:GetService("ReplicatedStorage")
 local AttackFolder = RS:WaitForChild("Remotes"):WaitForChild("AttacksServer")
 local BridgeNet2 = RS:WaitForChild("BridgeNet2")
 
-local AttackTypes = { Normal = "Normal", Instant = "Instant" }
-local ShopType = { Seeds = "Seeds", Gears = "Gears" }
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local BackPack = player:WaitForChild("BackPack")
+
+local farming = false
+local AutoPlantVar = false
+local Equipped = false
+local pos = nil
+
+local connection
+local plantConnection
+local ShopConnection
 
 local attackType = "None"
-local farming = false
-local connection
+local selectedItem = ""
+local selectedType = ""
 
-local autoPlanting = false
-local plantConnection
-
-local pos = nil
+local AttackRE = AttackFolder:WaitForChild("WeaponAttack")
+local DataRE = BridgeNet2.dataRemoteEvent
 
 -- Shops
 local SeedsTables = {
@@ -89,13 +103,10 @@ local GearTables = {
     "Speed Potion",
 }
 
--- Remotes
+local AttackTypes = { Normal = "Normal", Instant = "Instant" }
+local ShopType = { Seeds = "Seeds", Gears = "Gears" }
 
-local AttackRE = AttackFolder:WaitForChild("WeaponAttack")
-local DataRE = BridgeNet2.dataRemoteEvent
-
--- // Functions \\ --
-
+-- // Helper Functions \\ --
 local function TeleportToBrainrot(brainrotModel)
     local enemyRoot = brainrotModel:FindFirstChild("HumanoidRootPart") or brainrotModel:FindFirstChild("RootPart")
     local charRoot = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("RootPart")
@@ -104,53 +115,74 @@ local function TeleportToBrainrot(brainrotModel)
     end
 end
 
-local function AutoFarmBrainrot(Type)
+local function EquipBat()
+    local tool = BackPack:FindFirstChild("Bat")
+    if not tool then return end
+
+    if Equipped ~= true then
+        if tool.Parent ~= character then
+            Equipped = true
+            character:WaitForChild("Humanoid"):EquipTool(tool)
+        end
+    end
+end
+
+local function GetMoney()
+    
+end
+
+local function GetRebirth()
+    
+end
+
+-- // Functions \\ --
+function AutoFarmBrainrot(Type)
     if Type == AttackTypes.Normal then
-        for _, v in ipairs(Brainrots:GetChildren()) do
-            if v:IsA("Model") then
-                local root = v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("RootPart")
-                if root then
-                    TeleportToBrainrot(v)
-                    AttackRE:FireServer({ v.Name })
-                    break
+            if not Equipped then
+                EquipBat()
+                    for _, v in ipairs(Brainrots:GetChildren()) do
+                        if v:IsA("Model") then
+                            local root = v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("RootPart")
+                                if root then
+                                    TeleportToBrainrot(v)
+                                         AttackRE:FireServer({ v.Name })
+                        break
+                    end
                 end
             end
         end
     elseif Type == AttackTypes.Instant then
-        for _, v in ipairs(Brainrots:GetChildren()) do
-            if v:IsA("Model") then
-                local root = v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("RootPart")
-                if root then
-                    TeleportToBrainrot(v)
-                    local pos = UIS:GetMouseLocation()
-                    VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 0)
-                    VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 0)
-                    break
+        if not Equipped then
+            EquipBat()
+            for _, v in ipairs(Brainrots:GetChildren()) do
+                if v:IsA("Model") then
+                    local root = v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("RootPart")
+                    if root then
+                            TeleportToBrainrot(v)
+                                local pos = UIS:GetMouseLocation()
+                                    VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 0)
+                                        VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 0)
+                        break
+                    end
                 end
             end
         end
     end
 end
 
-local function AutoPlant()
+function AutoPlant()
     
 end
 
-local function AutoBuy(Item, Type)
+function AutoBuy(Item, Type)
     if Type == "" then
         print("AutoBuy: Invalid Type argument")
         return
     end
-<<<<<<< HEAD
     
     if Item == "" then
         print("AutoBuy: Invalid Item argument")
         return
-=======
-
-    if Plant == "" then
-        print("local function 'AutoBuy' Has Invalid Arguments. Got: null | Type: Item")
->>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
     end
     
     if Type == ShopType.Seeds then
@@ -161,12 +193,25 @@ local function AutoBuy(Item, Type)
 end
 
 -- // Main \\ --
+Main:Section({ Title = "Auto Farm", Icon = "timer" })
+
 Main:Dropdown({
     Title = "Attack Type",
     Values = { "None", "Normal", "Instant" },
     Value = "None",
     Callback = function(option)
         attackType = option
+    end
+})
+
+Main:Toggle({
+    Title = "Auto Equip Bat",
+    Desc = "Improving",
+    Icon = "checkmark",
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state)
+        EquipBat()
     end
 })
 
@@ -197,7 +242,7 @@ Main:Toggle({
 Main:Button({
     Title = "Save Position",
     Desc = "Save's Your Position",
-    Locked = false,
+    Locked = true,
     Callback = function()
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             pos = player.Character.HumanoidRootPart.CFrame
@@ -210,9 +255,9 @@ Main:Toggle({
     Desc = "Auto Plant",
     Icon = "checkmark",
     Type = "Checkbox",
-    Default = false,
+    Default = true,
     Callback = function(state)
-        autoPlanting = state
+        AutoPlantVar = state
         if not state and plantConnection then
             plantConnection:Disconnect()
             plantConnection = nil
@@ -220,7 +265,7 @@ Main:Toggle({
         end
         if state and not plantConnection then
             plantConnection = RunService.Heartbeat:Connect(function()
-                if autoPlanting then
+                if AutoPlantVar then
                     AutoPlant()
                 end
             end)
@@ -230,17 +275,8 @@ Main:Toggle({
 
 -- // Shop \\ --
 
-local selectedItem = ""
-local selectedType = ""
-
-local ShopConnection
-
 Shop:Dropdown({
-<<<<<<< HEAD
     Title = "Item Type",
-=======
-    Title = "Attack Type",
->>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
     Values = { "None", "Seed", "Gear" },
     Value = "None",
     Callback = function(option)
@@ -263,11 +299,7 @@ local ItemInput = Shop:Input({
 Shop:Toggle({
     Title = "Auto Buy Item",
     Desc = "Improving",
-<<<<<<< HEAD
     Icon = "checkmark",
-=======
-    Icon = "bird",
->>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
     Type = "Checkbox",
     Default = false,
     Callback = function(state)
@@ -279,25 +311,14 @@ Shop:Toggle({
         end
         if state and not ShopConnection then
             ShopConnection = RunService.Heartbeat:Connect(function()
-<<<<<<< HEAD
                 if selectedType ~= "None" and selectedItem ~= "" then
                     if selectedType == "Gear" then
                         AutoBuy(selectedItem, ShopType.Gears)
                 elseif selectedType == "Seed" then
-=======
-                if autobuy then
-                    if selectedType == "Gear" then
-                        AutoBuy(selectedItem, ShopType.Gears)
-                    elseif selectedType == "Seed" then
->>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
                         AutoBuy(selectedItem, ShopType.Seeds)
                     end
                 end
             end)
         end
     end
-<<<<<<< HEAD
 })
-=======
-})
->>>>>>> ba62f5f63edfccb9704ced7fecc2c4badeab451b
