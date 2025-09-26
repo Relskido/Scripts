@@ -136,20 +136,20 @@ local function AutoPlant()
     
 end
 
-local function AutoBuy(Item: any, Type: any)
+local function AutoBuy(Item, Type)
     if Type == "" then
-        print("local function 'AutoBuy'. Has Invalid Arguments. Got: null | Type: ItemType")
+        print("AutoBuy: Invalid Type argument")
+        return
     end
-
-    if Plant == "" then
-        print(" local function 'AutoBuy' Has Invalid Arguments. Got: null | Type: Item")
+    
+    if Item == "" then
+        print("AutoBuy: Invalid Item argument")
+        return
     end
-
+    
     if Type == ShopType.Seeds then
         DataRE:FireServer({ Item, "\7" })
-    end
-
-    if Type == ShopType.Gears then
+    elseif Type == ShopType.Gears then
         DataRE:FireServer({ Item, " " })
     end
 end
@@ -167,7 +167,7 @@ Main:Dropdown({
 Main:Toggle({
     Title = "Auto Farm",
     Desc = "Improving",
-    Icon = "bird",
+    Icon = "checkmark",
     Type = "Checkbox",
     Default = false,
     Callback = function(state)
@@ -202,7 +202,7 @@ Main:Button({
 Main:Toggle({
     Title = "Auto Plant",
     Desc = "Auto Plant",
-    Icon = "tree-pine",
+    Icon = "checkmark",
     Type = "Checkbox",
     Default = false,
     Callback = function(state)
@@ -225,15 +225,54 @@ Main:Toggle({
 -- // Shop \\ --
 
 local selectedItem = ""
+local selectedType = ""
+
+local ShopConnection
+
+Shop:Dropdown({
+    Title = "Item Type",
+    Values = { "None", "Seed", "Gear" },
+    Value = "None",
+    Callback = function(option)
+        selectedType = option
+    end
+})
 
 local ItemInput = Shop:Input({
-    Title = "Input",
+    Title = "Item Name",
     Desc = "",
-    Value = "Default value",
+    Value = "",
     InputIcon = "shopping-basket",
     Type = "Input",
     Placeholder = "eg. Cactus Seed or Banana Gun",
     Callback = function(input) 
         selectedItem = input
+    end
+})
+
+Shop:Toggle({
+    Title = "Auto Buy Item",
+    Desc = "Improving",
+    Icon = "checkmark",
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state)
+        autobuy = state
+        if not state and ShopConnection then
+            ShopConnection:Disconnect()
+            ShopConnection = nil
+            return
+        end
+        if state and not ShopConnection then
+            ShopConnection = RunService.Heartbeat:Connect(function()
+                if selectedType ~= "None" and selectedItem ~= "" then
+                    if selectedType == "Gear" then
+                        AutoBuy(selectedItem, ShopType.Gears)
+                elseif selectedType == "Seed" then
+                        AutoBuy(selectedItem, ShopType.Seeds)
+                    end
+                end
+            end)
+        end
     end
 })
