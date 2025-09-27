@@ -24,6 +24,8 @@ local Home = Window:Tab({
     Locked = false,
 })
 
+local TabDivider = Window:Divider()
+
 local Main = Window:Tab({
     Title = "Main",
     Icon = "tool-case",
@@ -41,6 +43,8 @@ local Shop = Window:Tab({
     Icon = "store",
     Locked = false,
 })
+
+local TabDivider2 = Window:Divider()
 
 local Info = Window:Tab({
     Title = "Info",
@@ -118,10 +122,10 @@ local function TeleportToBrainrot(brainrotModel)
 end
 
 local function EquipBat()
-    local tool = Backpack:FindFirstChild("Bat")
+    local tool = BackPack:FindFirstChild("Bat")
     if not tool then return end
 
-    if not Equipped then
+    if Equipped ~= true then
         if tool.Parent ~= character then
             Equipped = true
             character:WaitForChild("Humanoid"):EquipTool(tool)
@@ -140,7 +144,7 @@ end
 -- // Functions \\ --
 function AutoFarmBrainrot(Type)
     if Type == AttackTypes.Normal then
-            if not Equipped then
+            if Equipped == false then
                 EquipBat()
                     for _, v in ipairs(Brainrots:GetChildren()) do
                         if v:IsA("Model") then
@@ -154,16 +158,15 @@ function AutoFarmBrainrot(Type)
             end
         end
     elseif Type == AttackTypes.Instant then
-        if not Equipped then
+        if Equipped == false then
             EquipBat()
             for _, v in ipairs(Brainrots:GetChildren()) do
                 if v:IsA("Model") then
                     local root = v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("RootPart")
                     if root then
                             TeleportToBrainrot(v)
-                                local pos = UIS:GetMouseLocation()
-                                    VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 0)
-                                        VIM:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 0)
+                                    VIM:SendMouseButtonEvent(300, 100, 0, true, game, 0)
+                                        VIM:SendMouseButtonEvent(300, 100, 0, false, game, 0)
                         break
                     end
                 end
@@ -178,12 +181,12 @@ end
 
 function AutoBuy(Item, Type)
     if Type == "" then
-        print("AutoBuy: Invalid Type argument")
+        print("Function 'AutoBuy' Has Invalid Type argument. got 'null'")
         return
     end
     
     if Item == "" then
-        print("AutoBuy: Invalid Item argument")
+        print("Function 'AutoBuy' Has Invalid Item argument. got 'null' ")
         return
     end
     
@@ -195,7 +198,6 @@ function AutoBuy(Item, Type)
 end
 
 -- // Main \\ --
-Main:Section({ Title = "Auto Farm", Icon = "timer" })
 
 Main:Dropdown({
     Title = "Attack Type",
@@ -203,6 +205,17 @@ Main:Dropdown({
     Value = "None",
     Callback = function(option)
         attackType = option
+    end
+})
+
+Main:Toggle({
+    Title = "Auto Equip Bat",
+    Desc = "Improving",
+    Icon = "checkmark",
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state)
+        EquipBat()
     end
 })
 
